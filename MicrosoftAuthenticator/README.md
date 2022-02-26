@@ -15,7 +15,7 @@ __IMPORTANT__: Use this solution only for testing, not for production, as you wi
 8. Under __Overview__ copy __Application (client) id__ (you will need it later)
 9. Under __Certificates & secrets__ click on __New client ecret__
 10. Choose a display name and select a lifetime and click on __Add__ (you need to replace the secret when its lifetime is over)
-11. Copy the __Value__. You can get this value only now, after refreshing the page the value will get obfuscated; (you will need it later) 
+11. Copy the __Value__. You can get this value only now, after refreshing the page the value will get obfuscated (you will need it later) 
 
 ### Now copy the following lines into your client and replace __clientId__ and __clientSecret__ with your values
 ```java
