@@ -29,3 +29,8 @@ On the first startup it opens a browser page in which you need to login to your 
 
 ## Notes
 It can happen, that the saved refresh token gets invalid and you can't login anymore. Try to remove the token.json file and restart to game to freshly login to your account and to get a new refresh token.
+
+## Ressources:
+https://wiki.vg/Microsoft_Authentication_Scheme
+https://docs.microsoft.com/de-de/azure/active-directory/develop/v2-oauth2-auth-code-flow
+https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
