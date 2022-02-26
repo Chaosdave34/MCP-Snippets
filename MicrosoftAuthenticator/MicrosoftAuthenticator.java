@@ -1,5 +1,3 @@
-package de.chaosdave34.mysteries;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
@@ -19,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
+import sun.security.krb5.internal.crypto.Des;
 
 import java.awt.*;
 import java.io.*;
@@ -84,6 +83,7 @@ public class MicrosoftAuthenticator {
             }
 
             try {
+                if (Desktop.getDesktop() != null)
                 Desktop.getDesktop().browse(new URI(loginUri));
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
