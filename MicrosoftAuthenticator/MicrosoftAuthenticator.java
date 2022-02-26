@@ -1,3 +1,5 @@
+package de.chaosdave34.mysteries;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
@@ -19,10 +21,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,11 +47,28 @@ public class MicrosoftAuthenticator {
     private String refreshToken;
     private boolean shouldRefreshLogin;
 
+    private final File file;
+
     public MicrosoftAuthenticator(String clientId, String clientSecret) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
 
         loginUri = "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=" + clientId + "&response_type=code&redirect_uri=" + redirectUri + "&scope=XboxLive.signin%20offline_access";
+
+        File ROOT_DIR = new File("Mysteries");
+        if (!ROOT_DIR.exists()) {
+            ROOT_DIR.mkdirs();
+        }
+
+        file = new File(ROOT_DIR, "token.json");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         loadRefreshToken();
     }
 
@@ -74,6 +90,7 @@ public class MicrosoftAuthenticator {
             }
         } else {
             getToken(false);
+
         }
     }
 
@@ -242,19 +259,46 @@ public class MicrosoftAuthenticator {
 
     }
 
-    private void saveRefreshToken() {
-        FileManager.writeJsonToFile(new File(FileManager.getRootDirectory(), "token.json"), refreshToken);
+    public void saveRefreshToken() {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(refreshToken.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private void loadRefreshToken() {
-        String token = FileManager.readFromJson(new File(FileManager.getRootDirectory(), "token.json"), String.class);
+    public void loadRefreshToken() {
+        try {
+            FileInputStream inputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        if (token == null) {
+            StringBuilder builder = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                builder.append(line);
+            }
+
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+
+            String token = builder.toString();
+
+            if (token.equals("")) {
+                shouldRefreshLogin = true;
+            } else {
+                shouldRefreshLogin = false;
+                refreshToken = token;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
             shouldRefreshLogin = true;
-        } else {
-            shouldRefreshLogin = false;
-            refreshToken = token;
         }
     }
-
 }
