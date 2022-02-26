@@ -1,7 +1,7 @@
 # Session Changer
 Login to your Microsoft Account from your MCP client.
 
-__IMPORTANT__: Use this solution only for testing, not for production, as you need to save your client secret!
+__IMPORTANT__: Use this solution only for testing, not for production, as you will share your Azure Apps Client Secret!
 
 ## How to use
 ### First you nee to set up a __Microsoft Azure application__
@@ -17,7 +17,7 @@ __IMPORTANT__: Use this solution only for testing, not for production, as you ne
 10. Choose a display name and select a lifetime and click on __Add__ (you need to change the secret when its lifetime is over)
 11. Copy the __Value__. You can get this value only now, after refreshing the page the value will get obfuscated; (you will need it later) 
 
-### Now copy the following lines into your client and replace clientId and clientSecret with your values
+### Now copy the following lines into your client and replace __clientId__ and __clientSecret__ with your values
 ```java
 MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator(clientId, clientSecret);
 authenticator.login();
