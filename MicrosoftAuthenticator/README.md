@@ -24,7 +24,7 @@ authenticator.login();
 ```
 You need to change `private final Session session;` in __Minecraft.java__ to `public Session session;`
 ## How this works
-This class uses the Microsoft Authentication Scheme to login to your Xbox Life Accoutn and to get your access token / session id to change the session in your client.
+This class uses the Microsoft Authentication Scheme to login to your Xbox Life Accounz and to get your access token / session id to change the session of your client.
 On the first startup it opens a browser page in which you need to login to your Microsoft account. It then saves a refresh token in the .minecraft/ClientName/token.json  file so theres no need to open the browser to login in the future.
 
 ## Notes
