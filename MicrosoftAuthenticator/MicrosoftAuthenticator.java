@@ -29,30 +29,30 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class MicrosoftAuthenticator {
-    private final String client_id;
-    private final String client_secret;
+    private final String clientId;
+    private final String clientSecret;
 
     private String username;
     private String uuid;
-    private String access_token;
+    private String accessToken;
 
-    private final String redirect_uri = "http://localhost/api";
-    private final String login_uri;
+    private final String redirectUri = "http://localhost/api";
+    private final String loginUri;
 
-    private String auth_code;
-    private String xbox_access_token;
-    private String xbl_token;
-    private String xbox_userhash;
-    private String xsts_token;
+    private String authCode;
+    private String xboxAccessToken;
+    private String xblToken;
+    private String xboxUserhash;
+    private String xstsToken;
 
     private String refreshToken;
     private boolean shouldRefreshLogin;
 
-    public MicrosoftAuthenticator(String client_id, String client_secret) {
-        this.client_id = client_id;
-        this.client_secret = client_secret;
+    public MicrosoftAuthenticator(String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
 
-        login_uri = "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=" + redirect_uri + "&scope=XboxLive.signin%20offline_access";
+        loginUri = "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=" + clientId + "&response_type=code&redirect_uri=" + redirectUri + "&scope=XboxLive.signin%20offline_access";
         loadRefreshToken();
     }
 
@@ -68,7 +68,7 @@ public class MicrosoftAuthenticator {
             }
 
             try {
-                Desktop.getDesktop().browse(new URI(login_uri));
+                Desktop.getDesktop().browse(new URI(loginUri));
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -82,10 +82,10 @@ public class MicrosoftAuthenticator {
         ArrayList<NameValuePair> urlParameters = new ArrayList<>();
         if (freshLogin) {
             urlParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
-            urlParameters.add(new BasicNameValuePair("code", auth_code));
-            urlParameters.add(new BasicNameValuePair("client_id", client_id));
-            urlParameters.add(new BasicNameValuePair("redirect_uri", redirect_uri));
-            urlParameters.add(new BasicNameValuePair("client_secret", client_secret));
+            urlParameters.add(new BasicNameValuePair("code", authCode));
+            urlParameters.add(new BasicNameValuePair("client_id", clientId));
+            urlParameters.add(new BasicNameValuePair("redirect_uri", redirectUri));
+            urlParameters.add(new BasicNameValuePair("client_secret", clientSecret));
 
             try {
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
@@ -97,7 +97,7 @@ public class MicrosoftAuthenticator {
             try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(post)) {
                 String json = EntityUtils.toString(response.getEntity());
                 JsonObject jobj = new Gson().fromJson(json, JsonObject.class);
-                xbox_access_token = jobj.get("access_token").getAsString();
+                xboxAccessToken = jobj.get("access_token").getAsString();
 
                 refreshToken = jobj.get("refresh_token").getAsString();
                 saveRefreshToken();
@@ -109,8 +109,8 @@ public class MicrosoftAuthenticator {
 
             urlParameters.add(new BasicNameValuePair("grant_type", "refresh_token"));
             urlParameters.add(new BasicNameValuePair("refresh_token", refreshToken));
-            urlParameters.add(new BasicNameValuePair("client_id", client_id));
-            urlParameters.add(new BasicNameValuePair("client_secret", client_secret));
+            urlParameters.add(new BasicNameValuePair("client_id", clientId));
+            urlParameters.add(new BasicNameValuePair("client_secret", clientSecret));
             urlParameters.add(new BasicNameValuePair("scope", "XboxLive.signin"));
 
             try {
@@ -123,7 +123,7 @@ public class MicrosoftAuthenticator {
             try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(post)) {
                 String json = EntityUtils.toString(response.getEntity());
                 JsonObject jobj = new Gson().fromJson(json, JsonObject.class);
-                xbox_access_token = jobj.get("access_token").getAsString();
+                xboxAccessToken = jobj.get("access_token").getAsString();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -138,15 +138,15 @@ public class MicrosoftAuthenticator {
         post.setHeader("Content-type", "application/json");
         post.setHeader("Accept", "application/json");
 
-        String payload = "{\"Properties\": {\"AuthMethod\": \"RPS\", \"SiteName\": \"user.auth.xboxlive.com\", \"RpsTicket\": \"d=" + xbox_access_token + "\"},\"RelyingParty\": \"http://auth.xboxlive.com\", \"TokenType\": \"JWT\"}";
+        String payload = "{\"Properties\": {\"AuthMethod\": \"RPS\", \"SiteName\": \"user.auth.xboxlive.com\", \"RpsTicket\": \"d=" + xboxAccessToken + "\"},\"RelyingParty\": \"http://auth.xboxlive.com\", \"TokenType\": \"JWT\"}";
         StringEntity requestEntity = new StringEntity(payload, ContentType.APPLICATION_JSON);
         post.setEntity(requestEntity);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(post)) {
             String json = EntityUtils.toString(response.getEntity());
             JsonObject jobj = new Gson().fromJson(json, JsonObject.class);
-            xbl_token = jobj.get("Token").getAsString();
-            xbox_userhash = jobj.get("DisplayClaims").getAsJsonObject().get("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString();
+            xblToken = jobj.get("Token").getAsString();
+            xboxUserhash = jobj.get("DisplayClaims").getAsJsonObject().get("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,14 +159,14 @@ public class MicrosoftAuthenticator {
         post.setHeader("Content-type", "application/json");
         post.setHeader("Accept", "application/json");
 
-        String payload = "{\"Properties\": {\"SandboxId\": \"RETAIL\", \"UserTokens\": [\"" + xbl_token + "\"]}, \"RelyingParty\": \"rp://api.minecraftservices.com/\", \"TokenType\": \"JWT\"}";
+        String payload = "{\"Properties\": {\"SandboxId\": \"RETAIL\", \"UserTokens\": [\"" + xblToken + "\"]}, \"RelyingParty\": \"rp://api.minecraftservices.com/\", \"TokenType\": \"JWT\"}";
         StringEntity requestEntity = new StringEntity(payload, ContentType.APPLICATION_JSON);
         post.setEntity(requestEntity);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(post)) {
             String json = EntityUtils.toString(response.getEntity());
             JsonObject jobj = new Gson().fromJson(json, JsonObject.class);
-            xsts_token = jobj.get("Token").getAsString();
+            xstsToken = jobj.get("Token").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -176,14 +176,14 @@ public class MicrosoftAuthenticator {
     private void authMinecraft() {
         HttpPost post = new HttpPost("https://api.minecraftservices.com/authentication/login_with_xbox");
 
-        String payload = "{\"identityToken\": \"XBL3.0 x=" + xbox_userhash + ";" + xsts_token + "\"}";
+        String payload = "{\"identityToken\": \"XBL3.0 x=" + xboxUserhash + ";" + xstsToken + "\"}";
         StringEntity requestEntity = new StringEntity(payload, ContentType.APPLICATION_JSON);
         post.setEntity(requestEntity);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(post)) {
             String json = EntityUtils.toString(response.getEntity());
             JsonObject jobj = new Gson().fromJson(json, JsonObject.class);
-            access_token = jobj.get("access_token").getAsString();
+            accessToken = jobj.get("access_token").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,7 +197,7 @@ public class MicrosoftAuthenticator {
     private void getProfile() {
         HttpGet get = new HttpGet("https://api.minecraftservices.com/minecraft/profile");
 
-        get.setHeader("Authorization", "Bearer " + access_token);
+        get.setHeader("Authorization", "Bearer " + accessToken);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault(); CloseableHttpResponse response = httpClient.execute(get)) {
             String json = EntityUtils.toString(response.getEntity());
@@ -211,7 +211,7 @@ public class MicrosoftAuthenticator {
     }
 
     private void setSession() {
-        Minecraft.getMinecraft().session = new Session(username, uuid, access_token, "mojang");
+        Minecraft.getMinecraft().session = new Session(username, uuid, accessToken, "mojang");
         LogManager.getLogger().info("Setting user: " + username);
     }
 
@@ -236,7 +236,7 @@ public class MicrosoftAuthenticator {
             os.close();
             server.stop(1);
 
-            changer.auth_code = code;
+            changer.authCode = code;
             changer.getToken(true);
         }
 
