@@ -1,7 +1,7 @@
 # Session Changer
 Login to your Microsoft Account from your MCP client.
 
-__IMPORTANT__: Use this solution only for testing, not for production, as you will share your Azure Apps Client Secret!
+__IMPORTANT__: Use this solution only for testing, not for production, as you will share your Azure App's Client Secret!
 
 ## How to use
 ### First you nee to set up a __Microsoft Azure application__
