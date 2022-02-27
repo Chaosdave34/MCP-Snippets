@@ -1,8 +1,13 @@
 # Session Changer
 Login to your Microsoft Account from your MCP client.
 
-__IMPORTANT__: Use this solution only for testing, not for production, as you will share your Azure App's Client Secret!
-
+__IMPORTANT__: Use this solution only for testing, not for production!! 
+- You will share your Azure App's secret and
+- Your refresh token gets saved in a plain file. Everyone knowing your refresh key can get information about your account without any password!!! 
+Recommend solution:
+If you want to publish your client, it is recommended to host a server, with an own api, that can save your secret and every refresh token safely. 
+(Similar how Eric Golde uses a server which handles the database connection, so that the database password is not saved in the client, but at the server he wrote
+I highly recommend to do something similar with the Microsoft Authenticator! ) 
 ## How to use
 ### First you nee to set up a __Microsoft Azure application__
 1. Open https://portal.azure.com and login with your Microsoft Account
