@@ -1,13 +1,14 @@
 # Session Changer
 Login to your Microsoft Account from your MCP client.
 
-__IMPORTANT__: Use this solution only for testing, not for production!! 
+### __IMPORTANT__: Use this solution only for testing, not for production!! 
 - You will share your Azure App's secret and
-- Your refresh token gets saved in a plain file. Everyone knowing your refresh key can get information about your account without any password!!! 
-Recommend solution:
-If you want to publish your client, it is recommended to host a server, with an own api, that can save your secret and every refresh token safely. 
-(Similar how Eric Golde uses a server which handles the database connection, so that the database password is not saved in the client, but at the server he wrote
-I highly recommend to do something similar with the Microsoft Authenticator! ) 
+- Your refresh token gets saved in a plain file. Everyone knowing your refresh key can get information about your account without any password!!! <br />  
+
+### Recommend solution:
+If you want to publish your client, it is recommended to host a server, with an own api, that can save your secret and every refresh token safely. <br /> 
+(Similar how Eric Golde uses a server which handles the database connection, so that the database password is not saved in the client, but at the server he wrote.) <br /> 
+I highly recommend to do something similar with the Microsoft Authenticator! 
 ## How to use
 ### First you nee to set up a __Microsoft Azure application__
 1. Open https://portal.azure.com and login with your Microsoft Account
@@ -29,7 +30,7 @@ authenticator.login();
 ```
 You need to change `private final Session session;` in __Minecraft.java__ to `public Session session;`
 ## How this works
-This class uses the Microsoft Authentication Scheme to login to your Xbox Life Accounz and to get your access token / session id to change the session of your client.
+This class uses the Microsoft Authentication Scheme to login to your Xbox Life Account and to get your access token / session id to change the session of your client.
 On the first startup it opens a browser page in which you need to login to your Microsoft account. It then saves a refresh token in the .minecraft/ClientName/token.json  file so theres no need to open the browser to login in the future.
 
 ## Notes
