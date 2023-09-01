@@ -23,6 +23,8 @@ I highly recommend to do something similar with the Microsoft Authenticator!
 10. Choose a display name and select a lifetime and click on __Add__ (you need to replace the secret when its lifetime is over)
 11. Copy the __Value__. You can get this value only now, after refreshing the page the value will get obfuscated (you will need it later) 
 
+UPDATE 12. You now need to get your Mojang API access approved: https://help.minecraft.net/hc/en-us/articles/16254801392141
+
 ### Now copy the following lines into your client and replace __clientId__ and __clientSecret__ with your values
 ```java
 MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator(clientId, clientSecret);
